@@ -1,2 +1,5 @@
 # IDEs and editors
 .vscode/
+
+# Jenkins user creds
+.jenkins_myuser
