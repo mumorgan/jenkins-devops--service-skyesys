@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk-alpine
+# FROM eclipse-temurin:11-jdk-alpine
 VOLUME /tmp
 EXPOSE 8000
 ADD target/*.jar app.jar
