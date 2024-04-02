@@ -10,10 +10,6 @@ pipeline {
 		PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
 	}
 
-	tools {
-		jdk 'java-11.0.11'
-	}
-
 	stages {
 		stage('Checkout') {
 			steps {
@@ -40,9 +36,36 @@ pipeline {
 				sh "mvn test"
 			}
 		}
+
 		stage('Integration Test') {
 			steps {
 				sh "mvn failsafe:integration-test failsafe:verify"
+			}
+		}
+
+		stage('Package') {
+			steps {
+				sh "mvn package -DskipTests"
+			}
+		}
+
+		stage('Build Docker Image') {
+			steps {
+				// docker build -t skyemo555/currency-exchange-devops:$env.BUILD_TAG
+				script {
+					dockerImage = docker.build("skyemo555/currency-exchange-devops:${env.BUILD_TAG}")
+				}
+			}
+		}		
+		
+		stage('Push Docker Image') {
+			steps {
+				script {
+					docker.withRegistry('', 'skyemo555-dockerhub') {
+						dockerImage.push();
+						dockerImage.push('latest');
+					}
+				}
 			}
 		}
 	} 
